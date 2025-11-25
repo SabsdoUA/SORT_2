@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <stdarg.h>
 #include "lqueue.h"
 
 void RadixSort(char* A[],int n,int k){
@@ -21,7 +22,7 @@ void RadixSort(char* A[],int n,int k){
 }
 
 void RadixSortQueue(char* A[],int n,int k){
-    int x,y;
+    int x;
     int i,j;
     LQueue q;
     LQueue B[10];
@@ -30,11 +31,33 @@ void RadixSortQueue(char* A[],int n,int k){
     for(i=0;i<10;i++)B[i]=CreateQueue();
     for(i=0;i<n;i++) Enqueue(A[i],q);
 
-    /* DOPLNIT UTRIEDENIE */
+    for(j=k-1;j>=0;j--){
+        while(!IsEmptyQueue(q)){
+            temp=FrontAndDequeue(q);
+            x=temp[j]-'0';
+            if(x<0||x>9) x=0;
+            Enqueue(temp,B[x]);
+        }
+        for(x=0;x<10;x++){
+            while(!IsEmptyQueue(B[x])){
+                temp=FrontAndDequeue(B[x]);
+                Enqueue(temp,q);
+            }
+        }
+    }
 
-    i=0;    
+    i=0;
     while(!IsEmptyQueue(q)){
         temp=FrontAndDequeue(q);
         A[i++]=temp;
     }
+    for(i=0;i<10;i++)RemoveQueue(&B[i]);
+    RemoveQueue(&q);
+}
+
+void MyPrintf(const char *format,...){
+    va_list ap;
+    va_start(ap,format);
+    vprintf(format,ap);
+    va_end(ap);
 }
